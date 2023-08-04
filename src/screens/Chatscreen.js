@@ -1,14 +1,16 @@
-import { StyleSheet, Text, View } from "react-native";
+import { View, Text, SafeAreaView } from "react-native";
 import React from "react";
+import Header from "../Components/Header";
+import ChatList from "../Components/ChatList";
+import tw from "tailwind-react-native-classnames";
 
-const Chatscreen = () => {
+const ChatScreen = () => {
   return (
-    <View>
-      <Text>Chatscreen</Text>
-    </View>
+    <SafeAreaView style={tw.style("pt-5")}>
+      <Header title="Chat" />
+      <ChatList />
+    </SafeAreaView>
   );
 };
 
-export default Chatscreen;
-
-const styles = StyleSheet.create({});
+export default ChatScreen;
