@@ -15,12 +15,13 @@ function AuthProvider({ children }) {
   const navigation = useNavigation();
   const [initializing, setInitializing] = useState(true);
   const [user, setUser] = useState();
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
 
   function onAuthStateChanged(user) {
     setUser(user);
+
     if (initializing) setInitializing(false);
-    // setLoading(false);
+    setLoading(false);
   }
   const Signout = () => {
     auth.signOut().then(

@@ -66,7 +66,16 @@ const MessageScreen = () => {
   };
 
   return (
-    <SafeAreaView style={tw.style("pt-5 flex-1")}>
+    <SafeAreaView
+      style={[
+        tw.style("pt-5 flex-1"),
+        [
+          {
+            marginTop: Platform.OS === "android" ? 15 : 0,
+          },
+        ],
+      ]}
+    >
       <Header title={matchedUser?.displayName} callEnabled />
       <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : "height"}

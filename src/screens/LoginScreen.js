@@ -9,6 +9,8 @@ import {
   ActivityIndicator,
   Alert,
   KeyboardAvoidingView,
+  Platform,
+  Button,
 } from "react-native";
 import { auth } from "../../firebase";
 import {
@@ -18,12 +20,16 @@ import {
 } from "firebase/auth";
 
 import { useAuth } from "../Hooks/UserContext";
+import { Image } from "react-native";
+import * as ImagePicker from "expo-image-picker";
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 
 const LoginScreen = ({ navigation }) => {
   const [type, setType] = useState(1);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
+  const [image, setImage] = useState(null);
   const { setUser, setLoading, loading } = useAuth();
 
   useEffect(() => {
@@ -31,6 +37,36 @@ const LoginScreen = ({ navigation }) => {
     setEmail("");
     setPassword("");
   }, [type]);
+
+  const pickImage = async () => {
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.All,
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
+    });
+
+    if (!result.cancelled) {
+      try {
+        setLoading(true);
+        const response = await fetch(result.uri);
+        const blob = await response.blob();
+
+        // Upload the image to Firebase Storage
+        const storageRef = ref(Storage, "images/" + Date.now());
+        await uploadBytes(storageRef, blob);
+
+        // Get the image URL
+        const imageUrl = await getDownloadURL(storageRef);
+
+        setImage(imageUrl);
+      } catch (error) {
+        console.error("Error uploading image:", error);
+      } finally {
+        setLoading(false);
+      }
+    }
+  };
 
   const handleLogin = async () => {
     if (!email.trim() || !password.trim()) {
@@ -55,7 +91,7 @@ const LoginScreen = ({ navigation }) => {
     }
   };
   const handleRegister = async () => {
-    if (!email.trim() || !password.trim() || !name.trim()) {
+    if (!email.trim() || !password.trim() || !name.trim() || !image.trim()) {
       Alert.alert("Please fill all the fields");
       return;
     }
@@ -68,9 +104,9 @@ const LoginScreen = ({ navigation }) => {
         password
       );
 
-      // Set the user's display name
       await updateProfile(userCredential.user, {
         displayName: name,
+        photoURL: image,
       });
       setUser(userCredential.user);
       Alert.alert("User registered successfully!");
@@ -84,12 +120,46 @@ const LoginScreen = ({ navigation }) => {
 
   return (
     <ImageBackground style={{ flex: 1 }} source={require("../assets/bg.jpg")}>
-      <KeyboardAvoidingView style={styles.container} behavior="padding">
+      <KeyboardAvoidingView
+        style={styles.container}
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+      >
         {loading ? (
-          <ActivityIndicator size="large" color="purple" />
+          <ActivityIndicator size="large" color="white" />
         ) : (
           <>
             <Text style={styles.title}>{type === 1 ? "Login" : "Sign Up"}</Text>
+            {type === 2 && (
+              <View
+                style={{
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+              >
+                <TouchableOpacity onPress={pickImage}>
+                  {image ? (
+                    <Image
+                      source={{ uri: image }}
+                      style={{ width: 80, height: 80, borderRadius: 35 }}
+                    />
+                  ) : (
+                    <Image
+                      source={{
+                        uri: "https://img.icons8.com/?size=512&id=13075&format=png",
+                      }}
+                      style={{
+                        width: 60,
+                        height: 60,
+                        borderRadius: 5,
+                        borderColor: "black",
+                        borderWidth: 1,
+                        resizeMode: "contain",
+                      }}
+                    />
+                  )}
+                </TouchableOpacity>
+              </View>
+            )}
             {type === 2 && (
               <TextInput
                 placeholder="Enter Your Name"

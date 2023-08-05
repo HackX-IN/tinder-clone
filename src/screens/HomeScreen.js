@@ -24,6 +24,8 @@ import {
   where,
 } from "firebase/firestore";
 import generateId from "../Components/generateIds";
+import { StatusBar } from "react-native";
+import { Platform } from "react-native";
 
 const DUMMY_DATA = [
   {
@@ -54,6 +56,7 @@ const DUMMY_DATA = [
 
 const HomeScreen = () => {
   const { user, Signout } = useAuth();
+  console.log(user);
   const navigation = useNavigation();
   const [profiles, setProfiles] = useState([]);
   const swipeRef = useRef(null);
@@ -183,14 +186,33 @@ const HomeScreen = () => {
 
   return (
     <SafeAreaView style={tw.style("flex-1 mt-6")}>
-      <View style={tw.style("flex-row items-center justify-between px-5")}>
+      <View
+        style={[
+          tw.style("flex-row items-center justify-between px-5 "),
+          {
+            marginTop: Platform.OS === "android" ? StatusBar.currentHeight : 0,
+          },
+        ]}
+      >
         <TouchableOpacity onPress={Signout}>
-          <Image
-            style={tw.style("h-10 w-10 rounded-full")}
-            source={{
-              uri: "https://img.freepik.com/free-icon/user_318-159711.jpg",
-            }}
-          />
+          {user.photoURL ? (
+            <Image
+              style={[
+                tw.style("h-10 w-10 rounded-full "),
+                { borderWidth: 1, borderColor: "#FF5864", resizeMode: "cover" },
+              ]}
+              source={{
+                uri: user?.photoURL,
+              }}
+            />
+          ) : (
+            <Image
+              style={tw.style("h-10 w-10 rounded-full")}
+              source={{
+                uri: "https://img.freepik.com/free-icon/user_318-159711.jpg",
+              }}
+            />
+          )}
         </TouchableOpacity>
         <TouchableOpacity onPress={() => navigation.navigate("Modal")}>
           <Image
@@ -290,7 +312,12 @@ const HomeScreen = () => {
         />
       </View>
 
-      <View style={tw.style("flex flex-row justify-evenly")}>
+      <View
+        style={[
+          tw.style("flex flex-row justify-evenly"),
+          { marginBottom: Platform.OS === "android" ? 10 : 0 },
+        ]}
+      >
         <TouchableOpacity
           onPress={() => swipeRef.current.swipeLeft()}
           style={tw.style(

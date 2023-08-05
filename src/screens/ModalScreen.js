@@ -12,6 +12,8 @@ import { useAuth } from "../Hooks/UserContext";
 import { doc, setDoc } from "firebase/firestore";
 import { db, timestamp } from "../../firebase";
 import { useNavigation } from "@react-navigation/native";
+import { Platform } from "react-native";
+import { StatusBar } from "expo-status-bar";
 
 const ModalScreen = () => {
   const { user } = useAuth();
@@ -40,7 +42,12 @@ const ModalScreen = () => {
   };
 
   return (
-    <View style={tw.style("flex-1 items-center pt-1")}>
+    <View
+      style={[
+        tw.style("flex-1 items-center pt-1"),
+        { marginTop: Platform.OS === "android" ? 20 : 0 },
+      ]}
+    >
       <Image
         style={tw.style("h-20 w-full")}
         resizeMode="contain"
