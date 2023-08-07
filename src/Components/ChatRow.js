@@ -14,7 +14,6 @@ const ChatRow = ({ item }) => {
     setmatcheduser(getMatch(item.users, user.uid));
   }, []);
 
-  console.log(matchedUser);
   return (
     <TouchableOpacity
       className="p-6 space-x-2 mx-3 my-1 shadow-xl rounded-lg flex-row items-center flex bg-white "

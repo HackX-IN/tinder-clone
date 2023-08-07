@@ -42,26 +42,18 @@ const LoginScreen = ({ navigation }) => {
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.All,
       allowsEditing: true,
-      aspect: [4, 3],
-      quality: 1,
     });
 
     if (!result.cancelled) {
       try {
         setLoading(true);
-        const response = await fetch(result.uri);
-        const blob = await response.blob();
 
-        // Upload the image to Firebase Storage
-        const storageRef = ref(Storage, "images/" + Date.now());
-        await uploadBytes(storageRef, blob);
+        const imageUrl = result.uri; // Use the URI directly
 
-        // Get the image URL
-        const imageUrl = await getDownloadURL(storageRef);
-
+        // Now you can use the imageUrl as needed
         setImage(imageUrl);
       } catch (error) {
-        console.error("Error uploading image:", error);
+        console.error("Error processing image:", error);
       } finally {
         setLoading(false);
       }
@@ -224,7 +216,7 @@ const styles = StyleSheet.create({
     height: 40,
     borderColor: "white",
     borderWidth: 1,
-    color: "black",
+    color: "white",
     marginTop: 10,
     paddingHorizontal: 10,
     borderRadius: 8,

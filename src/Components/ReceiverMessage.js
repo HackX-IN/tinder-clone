@@ -2,6 +2,7 @@ import { View, Text } from "react-native";
 import React from "react";
 
 const ReceiverMessage = ({ message }) => {
+  console.log("recieve is", message);
   return (
     <View
       className="bg-red-400 rounded-lg rounded-tl-none px-5 py-3 mx-3 my-2 ml-14"

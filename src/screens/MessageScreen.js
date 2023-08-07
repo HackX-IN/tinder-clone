@@ -31,7 +31,7 @@ const MessageScreen = () => {
   const { user } = useAuth();
   const route = useRoute();
   const { matchedUser } = route.params;
-  console.log("match is ", matchedUser);
+
   const [input, setInput] = useState("");
   const [messages, setMessages] = useState([]);
 

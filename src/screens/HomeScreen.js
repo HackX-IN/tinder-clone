@@ -147,8 +147,6 @@ const HomeScreen = () => {
         await getDoc(doc(db, "users", user.uid))
       ).data();
 
-      console.log("loggedInProfile", loggedInProfile);
-
       getDoc(doc(db, "users", userSwiped.id, "swipes", user.uid)).then(
         (docSnap) => {
           if (docSnap.exists()) {
